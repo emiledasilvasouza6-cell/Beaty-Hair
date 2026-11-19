@@ -13,3 +13,44 @@ class Produto(db.Model):
     preco = db.column(db.Float, nullable=False)
     estoque = db.column(db.Integer, defalt=0)
     imagem = db.column(db.String(255))
+
+
+    def to_dect(self): 
+        return{
+            "id": self.id,
+            "nome": self.nome,
+            "descricao": self.descricao,
+            "categoria": self.categoria,
+            "preco": self.categoria,
+            "estoque": self.estoque,
+            "imagem": self.imagem
+        }
+    
+
+class Cliente(db.Model):
+    __tablename__ = "clientes"
+
+    id = db.column(db.Integer, primary_key=True)
+    nome = db.column(db.String(120), nullable=False)
+    email = db.column(db.String(120), unique=True)
+    telefone = db.column(db.String(20))
+    endereco = db.column(db.String(255))
+
+    pedidos = db.relationship(
+        "Pedido", 
+        back_populates="cliente",
+        lazy=True
+    )
+
+    def to_dect(self):
+        return{
+            "id": self.id,
+            "nome": self.nome,
+            "email": self.email,
+            "telefone": self.telefone,
+            "endereco": self.endereco
+
+        }
+    
+
+    
