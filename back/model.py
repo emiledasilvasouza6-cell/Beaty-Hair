@@ -90,5 +90,38 @@ class Pedido(db.Model):
     }  
 
 
+class ItemPedido(db.Model):
+    __tablename__ = "itens_pedido"
 
+    id = db.column(db.Integer, primary_key=True)
+    quantidade = db.column(db.Integer, nullable=False, defalt=1)
+    preco_unitario = db.column(db.Float, nullable=False)
 
+    produto_id = db.column(
+        db.Integer,
+        db.ForeignKey("produtos_id"),
+        nullable=True
+    )
+
+    pedido_id = db.column(
+        db.Integer,
+        db.ForeignKey("pedidos_id"),
+        nullable=False
+    )
+
+    produto = db.relationship("Produto")
+
+    pedido = db.relatonship(
+        "pedido", 
+        back_populates="itens"
+    )
+
+    def to_dict(self):
+        return{
+            "id": self.id,
+            "produto_id": self.produto_id,
+            "produto": self.produto.nome if self.produto else None,
+            "quantidde": self.quantidade,
+            "preco_unitario": self.preco_unitario,
+            "subtotal": self.quantidade * self.preco_unitario
+        }
