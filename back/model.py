@@ -53,4 +53,42 @@ class Cliente(db.Model):
         }
     
 
-    
+class Pedido(db.Model):
+    __tablename__ = "pedidos"
+
+    id = db.column(db.Integer, primary_key=True)
+    data = db.column(db.DateTime, defalt=datetime.now)
+    status = db.column(db.String(50), defalt="Pendente")
+    total = db.column(db.Float, defalt=0.0)
+
+    cliente_id = db.column(
+        db.Integer,
+        db.ForeignKey("clientes.id"),
+        nullable=True 
+    )
+
+    Cliente = db.relationship(
+        "Cliente",
+        back_populates="Pedido"
+    )
+
+    itens = db.relationship(
+        "ItemPedido",
+        back_populates = "Pedido",
+        cascade="all, delete-orphan"
+    )
+
+    def to_dict(self):
+        return{
+            "id": self.id,
+            "data": self.data.strftime("%d/%m/%y %H:%M"),
+            "status": self.status,
+            "total": self.total,
+            "cliente_id": self.cliente_id,
+            "cliente": self.cliente.nome if self.cliente else None,
+            "itens": [item.to_dict() for item in self.itens]
+    }  
+
+
+
+
